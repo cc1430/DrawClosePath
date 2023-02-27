@@ -178,10 +178,10 @@ public class GridImageView extends AppCompatImageView {
                 invalidate();
                 break;
             case MotionEvent.ACTION_CANCEL:
-                Log.e("chenchen", "onTouchEvent: cancel");
+//                Log.e("chenchen", "onTouchEvent: cancel");
                 break;
             case MotionEvent.ACTION_UP:
-                Log.e("chenchen", "onTouchEvent: up");
+//                Log.e("chenchen", "onTouchEvent: up");
                 bDrawPath = true;
                 drawPath.lineTo(pointX, pointY);
                 drawPath.close();
