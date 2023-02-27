@@ -20,21 +20,49 @@ import java.util.List;
 
 public class GridImageView extends AppCompatImageView {
 
+    Context context;
+    /**
+     * 网格线行数和列数
+     */
     int row, column;
+    /**
+     * 每个网格的宽高
+     */
     float rectW, rectH;
+    /**
+     * 画笔
+     */
     Paint linePaint = new Paint();
     Paint rectPaint = new Paint();
     Paint pathPaint = new Paint();
-    Context context;
+
+    /**
+     * 绘制路径
+     */
+    Path drawPath = new Path();
+    boolean showPath = false;
+    private boolean bDrawPath;
+
     int mode = MODE_DRAW;
-
-    Path path = new Path();
-
+    /**
+     * 模式：绘制
+     */
     public static int MODE_DRAW = 0x1000;
+    /**
+     * 模式：擦除
+     */
     public static int MODE_ERASE = 0x1001;
 
+    /**
+     * 存放需要填充区域的矩形
+     */
     List<RectF> fillRectList = new ArrayList<>();
+
+    /**
+     * 二位数组，返回每个网格的填充情况：1代表填充，0代表未填充
+     */
     int[][] integerArray;
+
 
     public GridImageView(@NonNull Context context) {
         super(context);
@@ -53,10 +81,6 @@ public class GridImageView extends AppCompatImageView {
         this.context = context;
         setClickable(true);
     }
-
-    RectF rectF = new RectF();
-    Region region = new Region();
-//    boolean bDrawPath = false;
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -89,11 +113,11 @@ public class GridImageView extends AppCompatImageView {
             canvas.drawRect(fillRectList.get(i), rectPaint);
         }
 
-//        if (bDrawPath) {
+        if (bDrawPath && showPath) {
 //            Log.d("chenchen", "onDraw: draw path!");
-//            canvas.drawPath(path, pathPaint);
-//            bDrawPath = false;
-//        }
+            canvas.drawPath(drawPath, pathPaint);
+            bDrawPath = false;
+        }
     }
 
     float downX, downY;
@@ -116,8 +140,8 @@ public class GridImageView extends AppCompatImageView {
 //                Log.d("chenchen", "onTouchEvent: down x = " + pointX + ", y = " + pointY);
                 downX = pointX;
                 downY = pointY;
-                path.reset();
-                path.moveTo(downX, downY);
+                drawPath.reset();
+                drawPath.moveTo(downX, downY);
                 int indexColumn = (int) (pointX / rectW);
                 int indexRow = (int) (pointY / rectH);
 //                Log.d("chenchen", "onTouchEvent: indexRow = " + indexRow + ", indexColumn = " + indexColumn);
@@ -139,7 +163,7 @@ public class GridImageView extends AppCompatImageView {
                 indexColumn = (int) (pointX / rectW);
                 indexRow = (int) (pointY / rectH);
 //                Log.d("chenchen", "onTouchEvent: indexRow = " + indexRow + ", indexColumn = " + indexColumn);
-                path.lineTo(pointX, pointY);
+                drawPath.lineTo(pointX, pointY);
 
                 rectf = new RectF(indexColumn * rectW, indexRow * rectH, (indexColumn + 1) * rectW, (indexRow + 1) * rectH);
                 if (mode == MODE_DRAW) {
@@ -158,11 +182,13 @@ public class GridImageView extends AppCompatImageView {
                 break;
             case MotionEvent.ACTION_UP:
                 Log.e("chenchen", "onTouchEvent: up");
-//                bDrawPath = true;
-                path.lineTo(pointX, pointY);
-                path.close();
-                path.computeBounds(rectF, true);
-                region.setPath(path, new Region((int) rectF.left, (int) rectF.top, (int) rectF.right, (int) rectF.bottom));
+                bDrawPath = true;
+                drawPath.lineTo(pointX, pointY);
+                drawPath.close();
+                RectF rectF = new RectF();
+                drawPath.computeBounds(rectF, true);
+                Region region = new Region();
+                region.setPath(drawPath, new Region((int) rectF.left, (int) rectF.top, (int) rectF.right, (int) rectF.bottom));
 
                 for (int i = 0; i < column; i++) {
                     for (int j = 0; j < row; j++) {
@@ -189,13 +215,17 @@ public class GridImageView extends AppCompatImageView {
     }
 
     public void clearAll() {
-        path.reset();
+        drawPath.reset();
         fillRectList.clear();
         invalidate();
     }
 
     public void setMode(int mode) {
         this.mode = mode;
+    }
+
+    public void showDrawPath(boolean bShow) {
+        this.showPath = bShow;
     }
 
     public void drawGrid(int row, int column) {
