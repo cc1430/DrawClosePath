@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Region;
 import android.util.AttributeSet;
@@ -22,7 +21,7 @@ import java.util.List;
 public class GridImageView extends AppCompatImageView {
 
     int row, column;
-    int rectW, rectH;
+    float rectW, rectH;
     Paint linePaint = new Paint();
     Paint rectPaint = new Paint();
     Paint pathPaint = new Paint();
@@ -34,7 +33,7 @@ public class GridImageView extends AppCompatImageView {
     public static int MODE_DRAW = 0x1000;
     public static int MODE_ERASE = 0x1001;
 
-    List<Rect> fillRectList = new ArrayList<>();
+    List<RectF> fillRectList = new ArrayList<>();
     int[][] integerArray;
 
     public GridImageView(@NonNull Context context) {
@@ -57,7 +56,7 @@ public class GridImageView extends AppCompatImageView {
 
     RectF rectF = new RectF();
     Region region = new Region();
-    boolean bDrawPath = false;
+//    boolean bDrawPath = false;
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -74,13 +73,13 @@ public class GridImageView extends AppCompatImageView {
         pathPaint.setStyle(Paint.Style.STROKE);
 
         if (column > 0) {
-            rectW = getWidth() / column;
+            rectW = 1.0f * getWidth() / column;
             for (int i = 0; i < column; i++) {
                 canvas.drawLine(i * rectW, 0, i * rectW, getHeight(), linePaint);
             }
         }
         if (row > 0) {
-            rectH = getHeight() / row;
+            rectH = 1.0f * getHeight() / row;
             for (int i = 0; i < row; i++) {
                 canvas.drawLine(0, i * rectH, getWidth(), i * rectH, linePaint);
             }
@@ -90,17 +89,20 @@ public class GridImageView extends AppCompatImageView {
             canvas.drawRect(fillRectList.get(i), rectPaint);
         }
 
-        if (bDrawPath) {
-            Log.d("chenchen", "onDraw: draw path!");
-            canvas.drawPath(path, pathPaint);
-            bDrawPath = false;
-        }
+//        if (bDrawPath) {
+//            Log.d("chenchen", "onDraw: draw path!");
+//            canvas.drawPath(path, pathPaint);
+//            bDrawPath = false;
+//        }
     }
 
     float downX, downY;
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (row <= 0 || column <= 0) {
+            return false;
+        }
         float pointX = event.getX();
         float pointY = event.getY();
         if (pointX > getWidth()) {
@@ -120,14 +122,14 @@ public class GridImageView extends AppCompatImageView {
                 int indexRow = (int) (pointY / rectH);
 //                Log.d("chenchen", "onTouchEvent: indexRow = " + indexRow + ", indexColumn = " + indexColumn);
 
-                Rect rect = new Rect(indexColumn * rectW, indexRow * rectH, (indexColumn + 1) * rectW, (indexRow + 1) * rectH);
+                RectF rectf = new RectF(indexColumn * rectW, indexRow * rectH, (indexColumn + 1) * rectW, (indexRow + 1) * rectH);
                 if (mode == MODE_DRAW) {
-                    if (!fillRectList.contains(rect)) {
-                        fillRectList.add(rect);
+                    if (!fillRectList.contains(rectf)) {
+                        fillRectList.add(rectf);
                         integerArray[indexColumn][indexRow] = 1;
                     }
                 } else {
-                    fillRectList.remove(rect);
+                    fillRectList.remove(rectf);
                     integerArray[indexColumn][indexRow] = 0;
                 }
                 invalidate();
@@ -139,14 +141,14 @@ public class GridImageView extends AppCompatImageView {
 //                Log.d("chenchen", "onTouchEvent: indexRow = " + indexRow + ", indexColumn = " + indexColumn);
                 path.lineTo(pointX, pointY);
 
-                rect = new Rect(indexColumn * rectW, indexRow * rectH, (indexColumn + 1) * rectW, (indexRow + 1) * rectH);
+                rectf = new RectF(indexColumn * rectW, indexRow * rectH, (indexColumn + 1) * rectW, (indexRow + 1) * rectH);
                 if (mode == MODE_DRAW) {
-                    if (!fillRectList.contains(rect)) {
-                        fillRectList.add(rect);
+                    if (!fillRectList.contains(rectf)) {
+                        fillRectList.add(rectf);
                         integerArray[indexColumn][indexRow] = 1;
                     }
                 } else {
-                    fillRectList.remove(rect);
+                    fillRectList.remove(rectf);
                     integerArray[indexColumn][indexRow] = 0;
                 }
                 invalidate();
@@ -156,7 +158,7 @@ public class GridImageView extends AppCompatImageView {
                 break;
             case MotionEvent.ACTION_UP:
                 Log.e("chenchen", "onTouchEvent: up");
-                bDrawPath = true;
+//                bDrawPath = true;
                 path.lineTo(pointX, pointY);
                 path.close();
                 path.computeBounds(rectF, true);
@@ -164,15 +166,15 @@ public class GridImageView extends AppCompatImageView {
 
                 for (int i = 0; i < column; i++) {
                     for (int j = 0; j < row; j++) {
-                        Rect tempRect = new Rect(i * rectW, j * rectH, (i + 1) * rectW, (j + 1) * rectH);
-                        if (region.contains(tempRect.centerX(), tempRect.centerY())) {
+                        RectF tempRectF = new RectF(i * rectW, j * rectH, (i + 1) * rectW, (j + 1) * rectH);
+                        if (region.contains((int) tempRectF.centerX(), (int) tempRectF.centerY())) {
                             if (mode == MODE_DRAW) {
-                                if (!fillRectList.contains(tempRect)) {
-                                    fillRectList.add(tempRect);
+                                if (!fillRectList.contains(tempRectF)) {
+                                    fillRectList.add(tempRectF);
                                     integerArray[i][j] = 1;
                                 }
                             } else {
-                                fillRectList.remove(tempRect);
+                                fillRectList.remove(tempRectF);
                                 integerArray[i][j] = 0;
                             }
                         }
