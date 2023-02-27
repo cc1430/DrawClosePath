@@ -6,7 +6,7 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <com.draw.demo.GridImageView
+    <com.cc.draw.view.GridImageView
         android:id="@+id/iv_grid"
         android:layout_width="match_parent"
         android:layout_height="200dp"
