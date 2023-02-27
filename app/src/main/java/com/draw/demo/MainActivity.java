@@ -3,14 +3,21 @@ package com.draw.demo;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import com.cc.draw.view.GridImageView;
 
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
     GridImageView gridImageView;
+    int row = 12, column = 20;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         gridImageView = findViewById(R.id.iv_grid);
-        gridImageView.drawGrid(12, 20);
+        gridImageView.drawGrid(row, column);
 
         TextView tv = findViewById(R.id.tv_mode);
 
@@ -46,6 +53,10 @@ public class MainActivity extends AppCompatActivity {
                 gridImageView.setMode(GridImageView.MODE_DRAW);
                 tv.setText(drawBtn.getText());
             }
+        });
+        
+        tv.setOnClickListener(v->{
+            Log.d("chenchen", "area = " + gridImageView.getArea());
         });
     }
 }

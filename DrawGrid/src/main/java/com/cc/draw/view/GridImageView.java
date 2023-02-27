@@ -217,6 +217,7 @@ public class GridImageView extends AppCompatImageView {
     public void clearAll() {
         drawPath.reset();
         fillRectList.clear();
+        this.integerArray = new int[column][row];
         invalidate();
     }
 
@@ -237,5 +238,21 @@ public class GridImageView extends AppCompatImageView {
 
     public int[][] getIntegerArray() {
         return integerArray;
+    }
+
+    public String getArea() {
+        StringBuffer result = new StringBuffer();
+        for (int j = 0; j < row; j++) {
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0; i < column; i++) {
+                sb.append(integerArray[i][j]);
+            }
+            int digit = Integer.parseInt(String.valueOf(sb), 2);
+            result.append(digit);
+            if (j != row - 1) {
+                result.append(",");
+            }
+        }
+        return result.toString();
     }
 }
