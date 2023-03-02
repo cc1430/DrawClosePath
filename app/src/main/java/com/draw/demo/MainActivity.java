@@ -1,18 +1,14 @@
 package com.draw.demo;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import com.cc.draw.view.GridImageView;
 
-import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.cc.draw.view.GridImageView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,6 +22,14 @@ public class MainActivity extends AppCompatActivity {
 
         gridImageView = findViewById(R.id.iv_grid);
         gridImageView.drawGrid(row, column);
+//        gridImageView.showDrawPath(true);
+        gridImageView.post(new Runnable() {
+            @Override
+            public void run() {
+                gridImageView.drawArea("0,0,0,0,4032,8160,8160,8064,7680,2048,0,0");
+            }
+        });
+
 
         TextView tv = findViewById(R.id.tv_mode);
 

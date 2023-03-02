@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.Region;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
@@ -84,8 +85,8 @@ public class GridImageView extends AppCompatImageView {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        linePaint.setColor(Color.BLACK);
-        linePaint.setStrokeWidth(1f);
+        linePaint.setColor(Color.parseColor("#80D8D8D8"));
+        linePaint.setStrokeWidth(2f);
         linePaint.setStyle(Paint.Style.STROKE);
 
         rectPaint.setColor(Color.parseColor("#4DFF0000"));
@@ -149,11 +150,11 @@ public class GridImageView extends AppCompatImageView {
                 if (mode == MODE_DRAW) {
                     if (!fillRectList.contains(rectf)) {
                         fillRectList.add(rectf);
-                        integerArray[indexColumn][indexRow] = 1;
+                        integerArray[indexRow][indexColumn] = 1;
                     }
                 } else {
                     fillRectList.remove(rectf);
-                    integerArray[indexColumn][indexRow] = 0;
+                    integerArray[indexRow][indexColumn] = 0;
                 }
                 invalidate();
                 break;
@@ -168,11 +169,11 @@ public class GridImageView extends AppCompatImageView {
                 if (mode == MODE_DRAW) {
                     if (!fillRectList.contains(rectf)) {
                         fillRectList.add(rectf);
-                        integerArray[indexColumn][indexRow] = 1;
+                        integerArray[indexRow][indexColumn] = 1;
                     }
                 } else {
                     fillRectList.remove(rectf);
-                    integerArray[indexColumn][indexRow] = 0;
+                    integerArray[indexRow][indexColumn] = 0;
                 }
                 invalidate();
                 break;
@@ -189,9 +190,9 @@ public class GridImageView extends AppCompatImageView {
                 Region region = new Region();
                 region.setPath(drawPath, new Region((int) rectF.left, (int) rectF.top, (int) rectF.right, (int) rectF.bottom));
 
-                for (int i = 0; i < column; i++) {
-                    for (int j = 0; j < row; j++) {
-                        RectF tempRectF = new RectF(i * rectW, j * rectH, (i + 1) * rectW, (j + 1) * rectH);
+                for (int i = 0; i < row; i++) {
+                    for (int j = 0; j < column; j++) {
+                        RectF tempRectF = new RectF(j * rectW, i * rectH, (j + 1) * rectW, (i + 1) * rectH);
                         if (region.contains((int) tempRectF.centerX(), (int) tempRectF.centerY())) {
                             if (mode == MODE_DRAW) {
                                 if (!fillRectList.contains(tempRectF)) {
@@ -216,7 +217,7 @@ public class GridImageView extends AppCompatImageView {
     public void clearAll() {
         drawPath.reset();
         fillRectList.clear();
-        this.integerArray = new int[column][row];
+        this.integerArray = new int[row][column];
         invalidate();
     }
 
@@ -231,7 +232,7 @@ public class GridImageView extends AppCompatImageView {
     public void drawGrid(int row, int column) {
         this.row = row;
         this.column = column;
-        this.integerArray = new int[column][row];
+        this.integerArray = new int[row][column];
         invalidate();
     }
 
@@ -241,17 +242,92 @@ public class GridImageView extends AppCompatImageView {
 
     public String getArea() {
         StringBuffer result = new StringBuffer();
-        for (int j = 0; j < row; j++) {
+        for (int i = 0; i < row; i++) {
             StringBuffer sb = new StringBuffer();
-            for (int i = 0; i < column; i++) {
+            for (int j = 0; j < column; j++) {
                 sb.append(integerArray[i][j]);
             }
             int digit = Integer.parseInt(String.valueOf(sb), 2);
             result.append(digit);
-            if (j != row - 1) {
+            if (i != row - 1) {
                 result.append(",");
             }
         }
         return result.toString();
     }
+
+    public void drawArea(String area) {
+        if (TextUtils.isEmpty(area) && !area.contains(",")) {
+            return;
+        }
+        try {
+            String[] split  = area.split(",");
+            for (int i = 0; i < split.length; i++) {
+                String str = Integer.toBinaryString(Integer.parseInt(split[i]));
+                if (column != str.length()) {
+                    StringBuffer stringBuffer = new StringBuffer();
+                    for (int j = 0; j < column - str.length(); j++) {
+                        stringBuffer.append("0");
+                    }
+                    stringBuffer.append(str);
+                    str = stringBuffer.toString();
+                }
+
+                for (int j = 0; j < column; j++) {
+                    if ("1".equals(String.valueOf(str.charAt(j)))) {
+                        RectF rectf = new RectF(j * rectW, i * rectH, (j + 1) * rectW, (i + 1) * rectH);
+                        if (!fillRectList.contains(rectf)) {
+                            fillRectList.add(rectf);
+                            integerArray[i][j] = 1;
+                        }
+                    }
+                }
+            }
+            invalidate();
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+//    public static void main(String[] args) {
+//        String area = "8,3,0";
+//        int row = 3, column = 4;
+//        int[][] array = new int[row][column];
+//        try {
+//            String[] split  = area.split(",");
+//            for (int i = 0; i < split.length; i++) {
+//                String str = Integer.toBinaryString(Integer.parseInt(split[i]));
+////                System.out.println(str);
+//                if (column != str.length()) {
+//                    StringBuffer stringBuffer = new StringBuffer();
+//                    for (int j = 0; j < column - str.length(); j++) {
+//                        stringBuffer.append("0");
+//                    }
+//                    stringBuffer.append(str);
+//                    str = stringBuffer.toString();
+//                }
+//
+//                for (int j = 0; j < column; j++) {
+//                    array[i][j] = Integer.parseInt(String.valueOf(str.charAt(j)));
+//
+//                    RectF rectf = new RectF(indexColumn * rectW, indexRow * rectH, (indexColumn + 1) * rectW, (indexRow + 1) * rectH);
+//                    if (mode == MODE_DRAW) {
+//                        if (!fillRectList.contains(rectf)) {
+//                            fillRectList.add(rectf);
+//                            integerArray[indexRow][indexColumn] = 1;
+//                        }
+//                    }
+//                }
+//            }
+//        }catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        for (int i = 0; i < row; i++) {
+//            for (int j = 0; j < column; j++) {
+//                System.out.println(array[i][j]);
+//            }
+//        }
+//    }
 }
+
