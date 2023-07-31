@@ -89,7 +89,7 @@ public class GridImageView extends AppCompatImageView {
         linePaint.setStrokeWidth(2f);
         linePaint.setStyle(Paint.Style.STROKE);
 
-        rectPaint.setColor(Color.parseColor("#4DFF0000"));
+        rectPaint.setColor(Color.parseColor("#66007FFF"));
         rectPaint.setStyle(Paint.Style.FILL);
 
         pathPaint.setColor(Color.RED);
