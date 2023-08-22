@@ -121,8 +121,6 @@ public class GridImageView extends AppCompatImageView {
         }
     }
 
-    float downX, downY;
-
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (row <= 0 || column <= 0) {
@@ -140,16 +138,17 @@ public class GridImageView extends AppCompatImageView {
         } else if (pointY < 0) {
             pointY = 0;
         }
+        int indexColumn = (int) (pointX / rectW);
+        int indexRow = (int) (pointY / rectH);
+        if (indexRow >= row || indexColumn >= column) {
+            return false;
+        }
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 Log.d("chenchen", "onTouchEvent: down x = " + pointX + ", y = " + pointY);
-                downX = pointX;
-                downY = pointY;
                 drawPath.reset();
-                drawPath.moveTo(downX, downY);
-                int indexColumn = (int) (pointX / rectW);
-                int indexRow = (int) (pointY / rectH);
+                drawPath.moveTo(pointX, pointY);
                 Log.d("chenchen", "onTouchEvent: indexRow = " + indexRow + ", indexColumn = " + indexColumn);
 
                 RectF rectf = new RectF(indexColumn * rectW, indexRow * rectH, (indexColumn + 1) * rectW, (indexRow + 1) * rectH);
@@ -166,8 +165,6 @@ public class GridImageView extends AppCompatImageView {
                 break;
             case MotionEvent.ACTION_MOVE:
                 Log.d("chenchen", "onTouchEvent: move x = " + pointX + ", y = " + pointY);
-                indexColumn = (int) (pointX / rectW);
-                indexRow = (int) (pointY / rectH);
                 Log.d("chenchen", "onTouchEvent: indexRow = " + indexRow + ", indexColumn = " + indexColumn);
                 drawPath.lineTo(pointX, pointY);
 
