@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="DragXyView">
+        <attr name="dpvStrokeWidth" format="float"/>
+        <attr name="dpvPointStrokeWidthMultiplier" format="float"/>
+        <attr name="dpvPointNormalColor" format="color"/>
+        <attr name="dpvPointPressedColor" format="color"/>
+        <attr name="dpvPointSelectedColor" format="color"/>
+        <attr name="dpvLineNormalColor" format="color"/>
+        <attr name="dpvLinePressedColor" format="color"/>
+        <attr name="dpvLineSelectedColor" format="color"/>
+        <attr name="dpvFillNormalColor" format="color"/>
+        <attr name="dpvFillPressedColor" format="color"/>
+        <attr name="dpvFillSelectedColor" format="color"/>
+        <attr name="dpvAllowableOffsets" format="dimension"/>
+        <attr name="dpvDragEnabled" format="boolean"/>
+        <attr name="dpvChangeAngleEnabled" format="boolean"/>
+        <attr name="dpvMultipleSelection" format="boolean"/>
+        <attr name="dpvClickToggleSelected" format="boolean"/>
+        <attr name="dpvAllowDragOutView" format="boolean"/>
+        <attr name="dpvTextSize" format="dimension"/>
+        <attr name="dpvTextNormalColor" format="color"/>
+        <attr name="dpvTextPressedColor" format="color"/>
+        <attr name="dpvTextSelectedColor" format="color"/>
+        <attr name="dpvShowText" format="boolean"/>
+        <attr name="dpvFakeBoldText" format="boolean"/>
+    </declare-styleable>
+</resources>
