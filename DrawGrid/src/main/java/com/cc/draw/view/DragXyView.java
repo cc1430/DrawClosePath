@@ -257,7 +257,7 @@ public class DragXyView extends View {
         mXyPointList = new ArrayList<>();
         mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
         mLongPressTimeout = ViewConfiguration.getLongPressTimeout();
-        mAllowableOffsets = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,16,getResources().getDisplayMetrics());
+        mAllowableOffsets = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,20,getResources().getDisplayMetrics());
         mTextSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,16,getResources().getDisplayMetrics());
     }
 

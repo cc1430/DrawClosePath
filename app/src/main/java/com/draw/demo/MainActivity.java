@@ -1,72 +1,57 @@
 package com.draw.demo;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import com.cc.draw.view.GridImageView;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    GridImageView gridImageView;
-    int row = 12, column = 20;
+    private RecyclerView recyclerView;
+    private MyAdapter adapter;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        DragXyFragment fragment = new DragXyFragment();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.add(R.id.fl_container, fragment);
-        transaction.commit();
+        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        gridImageView = findViewById(R.id.iv_grid);
-        gridImageView.drawGrid(row, column);
-//        gridImageView.showDrawPath(true);
-        gridImageView.post(new Runnable() {
+        List<String> dataList = new ArrayList<>();
+        dataList.add("绘制闭合区域示例");
+        dataList.add("可拖动多边形示例");
+        adapter = new MyAdapter(this, dataList);
+
+        recyclerView.setAdapter(adapter);
+        adapter.setItemClickListener(new MyAdapter.ItemClickListener() {
             @Override
-            public void run() {
-                gridImageView.drawArea("0,0,0,0,4032,8160,8160,8064,7680,2048,0,0");
+            public void onItemClick(View view, int position) {
+                switch (position) {
+                    case 0:
+                        Intent intent = new Intent(MainActivity.this, DrawGridActivity.class);
+                        startActivity(intent);
+                        break;
+                    case 1:
+                        intent = new Intent(MainActivity.this, DragXyActivity.class);
+                        startActivity(intent);
+                        break;
+                    default:
+                        break;
+                }
             }
         });
 
-
-        TextView tv = findViewById(R.id.tv_mode);
-
-        Button clearBtn = findViewById(R.id.btn_clear);
-        clearBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                gridImageView.clearAll();
-            }
-        });
-
-        Button eraseBtn = findViewById(R.id.btn_eraser);
-        eraseBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                gridImageView.setMode(GridImageView.MODE_ERASE);
-                tv.setText(eraseBtn.getText());
-            }
-        });
-
-        Button drawBtn = findViewById(R.id.btn_draw);
-        drawBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                gridImageView.setMode(GridImageView.MODE_DRAW);
-                tv.setText(drawBtn.getText());
-            }
-        });
-        
-        tv.setOnClickListener(v->{
-            Log.d("chenchen", "area = " + gridImageView.getArea());
-        });
+//        Intent intent = new Intent(MainActivity.this, DragXyActivity.class);
+//        startActivity(intent);
     }
 }

@@ -2,11 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#c7c7c7">
+    android:background="@color/black">
 
     <com.cc.draw.view.DragXyView
         android:id="@+id/drag_xy_view"
+        android:background="#c7c7c7"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true" />
 
 </RelativeLayout>
