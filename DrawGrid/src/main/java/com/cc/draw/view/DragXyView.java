@@ -42,54 +42,54 @@ public class DragXyView extends View {
     /**
      * 画笔描边的宽度
      */
-    private float mStrokeWidth = 4f;
+    private float mStrokeWidth = 6f;
 
     /**
      * 绘制点坐标时基于画笔描边的宽度倍数
      */
-    private float mPointStrokeWidthMultiplier = 6.0f;
+    private float mPointStrokeWidthMultiplier = 4.0f;
 
     /**
      * 多边形点的颜色
      */
-    private int mPointNormalColor = 0xFFE5574C;
+    private int mPointNormalColor = 0x00E46F00;
 
     /**
      * 多边形点按下状态时的颜色
      */
-    private int mPointPressedColor;
+    private int mPointPressedColor = 0xFFE46F00;
 
     /**
      * 多边形点选中状态时的颜色
      */
-    private int mPointSelectedColor;
+    private int mPointSelectedColor = 0xFFE46F00;
 
     /**
      * 多边形边线的颜色
      */
-    private int mLineNormalColor = 0xFFE5574C;
+    private int mLineNormalColor = 0xFFFFFFFF;
     /**
      * 多边形边线按下状态的颜色
      */
-    private int mLinePressedColor;
+    private int mLinePressedColor = 0xFFE46F00;
 
     /**
      * 多边形边线选中状态的颜色
      */
-    private int mLineSelectedColor;
+    private int mLineSelectedColor = 0xFFE46F00;
     /**
      * 多边形填充的颜色
      */
-    private int mFillNormalColor = 0x3FE5574C;
+    private int mFillNormalColor = 0x4DF57200;
     /**
      * 多边形填充按下状态时的颜色
      */
-    private int mFillPressedColor = 0x7FE5574C;
+    private int mFillPressedColor = 0x9CF57200;
 
     /**
      * 多边形填充选中状态时的颜色
      */
-    private int mFillSelectedColor = 0xAFE5574C;
+    private int mFillSelectedColor = 0x9CF57200;
 
     /**
      * 触摸多边形的当前索引

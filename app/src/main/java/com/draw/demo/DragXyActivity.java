@@ -39,11 +39,20 @@ public class DragXyActivity extends AppCompatActivity {
 
         dragXyView.addXyView(
                 new PointF(0f, 0f),
-                new PointF(0f, height / 2.0f),
-                new PointF(0f, height),
-                new PointF(width, height),
-                new PointF(width, height / 2.0f),
-                new PointF(width, 0f));
+                new PointF(0f, height / 4f),
+                new PointF(0f, height / 2f),
+                new PointF(width / 2f, height / 2f),
+                new PointF(width / 2f, height / 4f),
+                new PointF(width / 2f, 0f));
+
+//        dragXyView.addXyView(
+//                new PointF(width / 2f, 0f),
+//                new PointF(width / 2f, height / 2.0f),
+//                new PointF(width / 2f, height),
+//                new PointF(width, height),
+//                new PointF(width, height / 2.0f),
+//                new PointF(width, 0f));
+        dragXyView.setClickToggleSelected(true);
     }
 
     @Override
