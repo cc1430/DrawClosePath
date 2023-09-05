@@ -89,6 +89,10 @@
 
 -keep interface com.cc.draw.view.DragXyView$* {*;}
 -keepclassmembers class com.cc.draw.view.DragXyView {
-   *;
+   public *;
+}
+
+-keepclassmembers class com.cc.draw.view.DragXyView$* {
+   public *;
 }
 
