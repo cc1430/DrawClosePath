@@ -249,25 +249,26 @@ public class DragXyView extends View {
 
     public DragXyView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        init(context,attrs,defStyleAttr,defStyleRes);
+        init(context, attrs, defStyleAttr, defStyleRes);
     }
 
-    private void initDefaultValue(Context context){
+    private void initDefaultValue(Context context) {
         mXyPointList = new ArrayList<>();
         mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
         mLongPressTimeout = ViewConfiguration.getLongPressTimeout();
-        mAllowableOffsets = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,20,getResources().getDisplayMetrics());
-        mTextSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,16,getResources().getDisplayMetrics());
+        mAllowableOffsets = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
+        mTextSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 16, getResources().getDisplayMetrics());
     }
 
     /**
      * 初始化
+     *
      * @param context
      * @param attrs
      * @param defStyleAttr
      * @param defStyleRes
      */
-    private void init(Context context,AttributeSet attrs, int defStyleAttr, int defStyleRes){
+    private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         initDefaultValue(context);
 
 //        final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.DragXyView, defStyleAttr, defStyleRes);
@@ -335,62 +336,65 @@ public class DragXyView extends View {
 
     /**
      * 绘制多个多边形
+     *
      * @param canvas
      */
-    private void drawXyViews(Canvas canvas){
+    private void drawXyViews(Canvas canvas) {
         mPaint.reset();
         mPaint.setAntiAlias(true);
         mPaint.setStrokeCap(Paint.Cap.ROUND);
         int size = mXyPointList.size();
         boolean isSelected;
-        for(int i = 0; i < size; i++){
+        for (int i = 0; i < size; i++) {
             isDrag = i == mXyViewPosition;
             isSelected = isMultipleSelection ? mXyPointList.get(i).isSelected : i == mXyViewSelectPosition;
-            drawXyView(canvas, mXyPointList.get(i),i == mXyViewPosition,isSelected);
+            drawXyView(canvas, mXyPointList.get(i), i == mXyViewPosition, isSelected);
         }
     }
+
     boolean isDrag;
 
     /**
      * 绘制多边形
+     *
      * @param canvas
      */
-    private void drawXyView(Canvas canvas, XyPoint xyPoint, boolean isPressed, boolean isSelected){
+    private void drawXyView(Canvas canvas, XyPoint xyPoint, boolean isPressed, boolean isSelected) {
         PointF[] points = xyPoint.getPoints();
-        if(points != null && points.length > 0){
+        if (points != null && points.length > 0) {
             int size = points.length;
             float[] lines = new float[size << 1];
             Path path = new Path();
-            path.moveTo(points[0].x,points[0].y);
-            for(int i = 0,j = 0; i < size; i++){
+            path.moveTo(points[0].x, points[0].y);
+            for (int i = 0, j = 0; i < size; i++) {
                 j = i << 1;
                 PointF pointF = points[i];
                 lines[j] = pointF.x;
                 lines[j + 1] = pointF.y;
                 //将点连线
-                if(i > 0){
-                    path.lineTo(pointF.x,pointF.y);
+                if (i > 0) {
+                    path.lineTo(pointF.x, pointF.y);
                 }
             }
             path.close();
             //根据路径绘制区域
             mPaint.setStrokeWidth(mStrokeWidth);
-            mPaint.setPathEffect(new DashPathEffect(new float[]{15,15}, 0));
-            mPaint.setColor(obtainColor(isPressed,isSelected,mLineNormalColor,mLinePressedColor,mLineSelectedColor));
+            mPaint.setPathEffect(new DashPathEffect(new float[]{15, 15}, 0));
+            mPaint.setColor(obtainColor(isPressed, isSelected, mLineNormalColor, mLinePressedColor, mLineSelectedColor));
             mPaint.setStyle(Paint.Style.STROKE);
-            canvas.drawPath(path,mPaint);
+            canvas.drawPath(path, mPaint);
             //根据路径绘制区域填充
-            mPaint.setColor(obtainColor(isPressed,isSelected,mFillNormalColor,mFillPressedColor,mFillSelectedColor));
-            if(mPaint.getColor() != 0){
+            mPaint.setColor(obtainColor(isPressed, isSelected, mFillNormalColor, mFillPressedColor, mFillSelectedColor));
+            if (mPaint.getColor() != 0) {
                 mPaint.setStyle(Paint.Style.FILL);
-                canvas.drawPath(path,mPaint);
+                canvas.drawPath(path, mPaint);
             }
 
             //绘制点
-            if(mPointStrokeWidthMultiplier > 0){
+            if (mPointStrokeWidthMultiplier > 0) {
                 mPaint.setStrokeWidth(mStrokeWidth * mPointStrokeWidthMultiplier);
-                mPaint.setColor(obtainColor(isPressed,isSelected,mPointNormalColor,mPointPressedColor,mPointSelectedColor));
-                canvas.drawPoints(lines,mPaint);
+                mPaint.setColor(obtainColor(isPressed, isSelected, mPointNormalColor, mPointPressedColor, mPointSelectedColor));
+                canvas.drawPoints(lines, mPaint);
 
                 if (mEventPointIndex >= 0 && isDrag) {
                     mPaint.setStyle(Paint.Style.STROKE);
@@ -402,17 +406,17 @@ public class DragXyView extends View {
             }
 
             //绘制Text
-            if(isShowText && !TextUtils.isEmpty(xyPoint.getText())){
+            if (isShowText && !TextUtils.isEmpty(xyPoint.getText())) {
                 mPaint.setStyle(Paint.Style.FILL);
                 mPaint.setFakeBoldText(isFakeBoldText);
                 mPaint.setTextSize(mTextSize);
-                mPaint.setColor(obtainColor(isPressed,isSelected,mTextNormalColor,mTextPressedColor,mTextSelectedColor));
+                mPaint.setColor(obtainColor(isPressed, isSelected, mTextNormalColor, mTextPressedColor, mTextSelectedColor));
                 mPaint.setTextAlign(Paint.Align.CENTER);
                 Paint.FontMetrics fontMetrics = mPaint.getFontMetrics();
-                float distance = (fontMetrics.bottom - fontMetrics.top)/2 - fontMetrics.bottom;
+                float distance = (fontMetrics.bottom - fontMetrics.top) / 2 - fontMetrics.bottom;
                 float centerX = (xyPoint.getLeftMostPoint().x + xyPoint.getRightMostPoint().x) / 2;
                 float centerY = (xyPoint.getTopMostPoint().y + xyPoint.getBottomMostPoint().y) / 2 + distance;
-                canvas.drawText(xyPoint.getText(),centerX,centerY,mPaint);
+                canvas.drawText(xyPoint.getText(), centerX, centerY, mPaint);
             }
 
         }
@@ -420,6 +424,7 @@ public class DragXyView extends View {
 
     /**
      * 获得颜色
+     *
      * @param isPressed
      * @param isSelected
      * @param normalColor
@@ -427,11 +432,11 @@ public class DragXyView extends View {
      * @param selectedColor
      * @return
      */
-    private int obtainColor(boolean isPressed,boolean isSelected,int normalColor,int pressedColor,int selectedColor){
-        if(isPressed && pressedColor != 0){
+    private int obtainColor(boolean isPressed, boolean isSelected, int normalColor, int pressedColor, int selectedColor) {
+        if (isPressed && pressedColor != 0) {
             return pressedColor;
         }
-        if(isSelected && selectedColor != 0){
+        if (isSelected && selectedColor != 0) {
             return selectedColor;
         }
         return normalColor;
@@ -443,18 +448,18 @@ public class DragXyView extends View {
         mEventY = event.getY();
 //        Log.d("chenchen",mEventX +" , " + mEventY);
         isIntercept = event.getPointerCount() == 1;
-        switch (event.getAction()){
+        switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                isIntercept = handleDownEvent(mEventX,mEventY);
+                isIntercept = handleDownEvent(mEventX, mEventY);
                 break;
             case MotionEvent.ACTION_MOVE:
-                if(isIntercept){
-                    isIntercept = handleMoveEvent(mEventX,mEventY);
+                if (isIntercept) {
+                    isIntercept = handleMoveEvent(mEventX, mEventY);
                 }
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                handleUpEvent(mEventX,mEventY);
+                handleUpEvent(mEventX, mEventY);
                 break;
         }
         mLastX = mEventX;
@@ -467,7 +472,7 @@ public class DragXyView extends View {
         public void run() {
             //如果执行了长按事件，则将点击事件忽略掉
             isClickEvent = false;
-            if(mOnXyViewLongClickListener != null){
+            if (mOnXyViewLongClickListener != null) {
                 mOnXyViewLongClickListener.onXyViewLongClick(mXyViewPosition);
             }
         }
@@ -475,32 +480,33 @@ public class DragXyView extends View {
 
     /**
      * 处理手指触摸抬起事件
+     *
      * @param eventX
      * @param eventY
      */
-    private void handleUpEvent(float eventX,float eventY){
-        if(mXyViewPosition >= 0){
-            if(isClickEvent){
-                double distance = Math.sqrt(Math.abs(Math.pow(eventX - mDownX,2) + Math.pow(eventY - mDownY,2)));
-                if(distance <= mTouchSlop){
-                    if(isClickToggleSelected){//如果点击自动切换选中状态
-                        if(isMultipleSelection){
+    private void handleUpEvent(float eventX, float eventY) {
+        if (mXyViewPosition >= 0) {
+            if (isClickEvent) {
+                double distance = Math.sqrt(Math.abs(Math.pow(eventX - mDownX, 2) + Math.pow(eventY - mDownY, 2)));
+                if (distance <= mTouchSlop) {
+                    if (isClickToggleSelected) {//如果点击自动切换选中状态
+                        if (isMultipleSelection) {
                             mXyPointList.get(mXyViewPosition).isSelected = !mXyPointList.get(mXyViewPosition).isSelected;
-                        }else{
+                        } else {
                             mXyViewSelectPosition = mXyViewSelectPosition != mXyViewPosition ? mXyViewPosition : NONE;
                         }
                     }
-                    if(mOnXyViewClickListener != null){
+                    if (mOnXyViewClickListener != null) {
                         mOnXyViewClickListener.onXyViewClick(mXyViewPosition);
                     }
                 }
                 isClickEvent = false;
             }
-            if(isLongClickRunnable){
+            if (isLongClickRunnable) {
                 removeCallbacks(mLongClickRunnable);
                 isLongClickRunnable = false;
             }
-            if(mOnChangeListener != null){
+            if (mOnChangeListener != null) {
                 mOnChangeListener.onStopTrackingTouch(mXyViewPosition);
             }
         }
@@ -514,59 +520,60 @@ public class DragXyView extends View {
 
     /**
      * 处理手指触摸移动事件
+     *
      * @param eventX
      * @param eventY
      * @return
      */
-    private boolean handleMoveEvent(float eventX,float eventY){
-        if(isClickEvent || isLongClickRunnable){
-            double distance = Math.sqrt(Math.abs(Math.pow(eventX - mDownX,2) + Math.pow(eventY - mDownY,2)));
-            if(distance > mTouchSlop){//当触摸点与最初按下的点的距离超过一定的距离，则认为是移动事件，即非点击或长按事件
-                if(isClickEvent){
+    private boolean handleMoveEvent(float eventX, float eventY) {
+        if (isClickEvent || isLongClickRunnable) {
+            double distance = Math.sqrt(Math.abs(Math.pow(eventX - mDownX, 2) + Math.pow(eventY - mDownY, 2)));
+            if (distance > mTouchSlop) {//当触摸点与最初按下的点的距离超过一定的距离，则认为是移动事件，即非点击或长按事件
+                if (isClickEvent) {
                     isClickEvent = false;
                 }
-                if(isLongClickRunnable){
+                if (isLongClickRunnable) {
                     removeCallbacks(mLongClickRunnable);
                     isLongClickRunnable = false;
                 }
             }
         }
 
-        if(Math.sqrt(Math.abs(Math.pow(eventX - mLastX,2) + Math.pow(eventY - mLastY,2))) > 100){
+        if (Math.sqrt(Math.abs(Math.pow(eventX - mLastX, 2) + Math.pow(eventY - mLastY, 2))) > 100) {
             //如果两点之间的距离超过100则过滤掉，因为这可能是多点触控导致的触摸点坐标突变
             return false;
         }
-        if(mXyViewPosition >= 0){
-            if(mEventPointIndex >= 0){//拖动点，改变多边形当前拖动的点坐标信息
-                if(isChangeAngleEnabled){
+        if (mXyViewPosition >= 0) {
+            if (mEventPointIndex >= 0) {//拖动点，改变多边形当前拖动的点坐标信息
+                if (isChangeAngleEnabled) {
                     //根据触摸的点坐标更新X轴坐标信息
                     float newX = eventX;
-                    float newY= eventY;
-                    if(!isAllowDragOutView){
-                        if(eventX < 0){
+                    float newY = eventY;
+                    if (!isAllowDragOutView) {
+                        if (eventX < 0) {
                             newX = 0;
-                        }else if(eventX > getWidth()){
+                        } else if (eventX > getWidth()) {
                             newX = getWidth();
                         }
                         //根据触摸的点坐标更新Y轴坐标信息
-                        if(eventY < 0){
+                        if (eventY < 0) {
                             newY = 0;
-                        }else if(eventY > getHeight()){
+                        } else if (eventY > getHeight()) {
                             newY = getHeight();
                         }
                     }
 
-                    mXyPointList.get(mXyViewPosition).updatePoint(newX,newY,mEventPointIndex);
+                    mXyPointList.get(mXyViewPosition).updatePoint(newX, newY, mEventPointIndex);
                     invalidate();
-                    if(mOnChangeListener!= null){
-                        mOnChangeListener.onChanged(mXyViewPosition,true);
+                    if (mOnChangeListener != null) {
+                        mOnChangeListener.onChanged(mXyViewPosition, true);
                     }
                     return true;
                 }
-            }else if(isDragEvent && (Math.abs(mLastX - eventX) > 1 || Math.abs(mLastY - eventY) > 1)){//拖动多边形
+            } else if (isDragEvent && (Math.abs(mLastX - eventX) > 1 || Math.abs(mLastY - eventY) > 1)) {//拖动多边形
                 updateDragPoints(mXyPointList.get(mXyViewPosition));
-                if(mOnChangeListener!= null){
-                    mOnChangeListener.onChanged(mXyViewPosition,true);
+                if (mOnChangeListener != null) {
+                    mOnChangeListener.onChanged(mXyViewPosition, true);
                 }
                 return true;
             }
@@ -577,36 +584,37 @@ public class DragXyView extends View {
 
     /**
      * 处理手指触摸按下事件
+     *
      * @param eventX
      * @param eventY
      */
-    private boolean handleDownEvent(float eventX,float eventY){
+    private boolean handleDownEvent(float eventX, float eventY) {
         mDownX = mLastX = eventX;
         mDownY = mLastY = eventY;
         int size = mXyPointList.size();
-        for(int i = size - 1; i >= 0; i--){
-            if(isChangeAngleEnabled){
-                mEventPointIndex = obtainCurrentPointIndex(mXyPointList.get(i).getPoints(),eventX,eventY);
+        for (int i = size - 1; i >= 0; i--) {
+            if (isChangeAngleEnabled) {
+                mEventPointIndex = obtainCurrentPointIndex(mXyPointList.get(i).getPoints(), eventX, eventY);
                 Log.d("chenchen", "handleDownEvent: mEventPointIndex = " + mEventPointIndex);
-                if(mEventPointIndex >= 0){
+                if (mEventPointIndex >= 0) {
                     mXyViewPosition = i;
-                    if(mOnChangeListener!= null){
+                    if (mOnChangeListener != null) {
                         mOnChangeListener.onStartTrackingTouch(i);
                     }
                     return true;
                 }
             }
 
-            if(mEventPointIndex < 0){//如果触摸点小于0，则去检测是否符合拖动事件
-                isDragEvent = canDragEvent(mXyPointList.get(i).getPoints(),eventX,eventY);
-                if(isDragEvent){
+            if (mEventPointIndex < 0) {//如果触摸点小于0，则去检测是否符合拖动事件
+                isDragEvent = canDragEvent(mXyPointList.get(i).getPoints(), eventX, eventY);
+                if (isDragEvent) {
                     mXyViewPosition = i;
-                    if(mOnChangeListener!= null){
+                    if (mOnChangeListener != null) {
                         mOnChangeListener.onStartTrackingTouch(i);
                     }
                     isClickEvent = true;
-                    if(mOnXyViewLongClickListener != null){
-                        postDelayed(mLongClickRunnable,mLongPressTimeout);
+                    if (mOnXyViewLongClickListener != null) {
+                        postDelayed(mLongClickRunnable, mLongPressTimeout);
                         isLongClickRunnable = true;
                     }
                     return isDragEnabled;
@@ -618,14 +626,15 @@ public class DragXyView extends View {
 
     /**
      * 根据触摸点坐标获得当前触摸点的索引
+     *
      * @return 返回当前触摸点的索引，当触摸点附近没有符合的坐标点时，索引返回{@code -1}
      */
-    private int obtainCurrentPointIndex(PointF[] point,float eventX,float eventY){
-        if(point != null && point.length > 0){
+    private int obtainCurrentPointIndex(PointF[] point, float eventX, float eventY) {
+        if (point != null && point.length > 0) {
             int size = point.length;
-            for(int i = 0; i < size; i++){
+            for (int i = 0; i < size; i++) {
                 //通过遍历触摸点坐标是否在点坐标附近，用于判定是否是触摸当前点坐标
-                if(isPointRange(point[i].x,point[i].y,eventX,eventY)){
+                if (isPointRange(point[i].x, point[i].y, eventX, eventY)) {
                     return i;
                 }
             }
@@ -636,29 +645,31 @@ public class DragXyView extends View {
 
     /**
      * 触摸点坐标是否在点坐标附近，用于判定是否是触摸当前点坐标
+     *
      * @param x
      * @param y
      * @param eventX
      * @param eventY
      * @return
      */
-    private boolean isPointRange(float x,float y,float eventX,float eventY){
+    private boolean isPointRange(float x, float y, float eventX, float eventY) {
         //通过触摸的eventX,eventY坐标与坐标点x，y来做对比，因为触摸没那么精准，所以这里扩大范围，允许一定的误差偏移量mAllowableOffsets，判断触摸点是否在坐标点的范围附近
         return eventX > x - mAllowableOffsets && eventX < x + mAllowableOffsets && eventY > y - mAllowableOffsets && eventY < y + mAllowableOffsets;
     }
 
     /**
      * 根据判断点坐标是否在区域内，来决定是否允许拖动
+     *
      * @param point
      * @param eventX
      * @param eventY
      * @return
      */
-    private boolean canDragEvent(PointF[] point,float eventX,float eventY){
+    private boolean canDragEvent(PointF[] point, float eventX, float eventY) {
         int cross = 0;
-        if(point != null && point.length > 0){
+        if (point != null && point.length > 0) {
             int size = point.length;
-            for(int i = 0; i < size; i++){
+            for (int i = 0; i < size; i++) {
                 PointF p1 = point[i];
                 PointF p2 = point[(i + 1) % size];
                 //求解 y=p.y 与 p1 p2 的交点
@@ -669,7 +680,7 @@ public class DragXyView extends View {
                 if (eventY >= Math.max(p1.y, p2.y)) //交点在p1 p2延长线上
                     continue;
                 //求交点的x坐标
-                float x =  (eventY - p1.y) *  (p2.x - p1.x) / (p2.y - p1.y) + p1.x;
+                float x = (eventY - p1.y) * (p2.x - p1.x) / (p2.y - p1.y) + p1.x;
                 if (x > eventX)
                     cross++; //只统计单边交点
             }
@@ -681,15 +692,15 @@ public class DragXyView extends View {
     /**
      * 更新拖拽点信息
      */
-    private synchronized void updateDragPoints(XyPoint xyPoint){
-        float moveX =  mEventX - mLastX;
-        float moveY =  mEventY - mLastY;
+    private synchronized void updateDragPoints(XyPoint xyPoint) {
+        float moveX = mEventX - mLastX;
+        float moveY = mEventY - mLastY;
         PointF[] points = xyPoint.getPoints();
-        if(points != null && points.length > 0){
+        if (points != null && points.length > 0) {
             int size = points.length;
             boolean isMoveX = true;
             boolean isMoveY = true;
-            if(!isAllowDragOutView) {//如果允许拖出视图以外，则进行判断是否有点超出了四个边界
+            if (!isAllowDragOutView) {//如果允许拖出视图以外，则进行判断是否有点超出了四个边界
                 for (int i = 0; i < size; i++) {
                     //通过遍历判定X轴坐标点是否碰碰撞的左右的边界
                     if (moveX > 0 && xyPoint.getRightMostPoint().x + moveX > getWidth()) { //向右边移动
@@ -710,13 +721,13 @@ public class DragXyView extends View {
                 }
             }
             //只要有一边没有碰撞到边界，就可以拖动
-            if(isMoveX || isMoveY){
-                for(int i = 0; i < size; i++){
-                    if(isMoveX)
+            if (isMoveX || isMoveY) {
+                for (int i = 0; i < size; i++) {
+                    if (isMoveX)
                         points[i].x += moveX;
-                    if(isMoveY)
+                    if (isMoveY)
                         points[i].y += moveY;
-                    xyPoint.updatePoint(points[i],i);
+                    xyPoint.updatePoint(points[i], i);
                 }
                 invalidate();
             }
@@ -725,48 +736,53 @@ public class DragXyView extends View {
 
     /**
      * 添加多边形
+     *
      * @param points
      */
-    public void addXyView(PointF... points){
+    public void addXyView(PointF... points) {
         addXyView(new XyPoint(points));
     }
 
     /**
      * 添加多边形
+     *
      * @param points
      */
-    public void addXyView(List<PointF> points){
+    public void addXyView(List<PointF> points) {
         addXyView(new XyPoint(points));
     }
 
     /**
      * 添加多边形
+     *
      * @param xyPoint
      */
-    public void addXyView(XyPoint xyPoint){
+    public void addXyView(XyPoint xyPoint) {
         mXyPointList.add(xyPoint);
         invalidate();
     }
 
     /**
      * 添加多边形
+     *
      * @param xyPoints
      */
-    public void addXyView(Collection<XyPoint> xyPoints){
+    public void addXyView(Collection<XyPoint> xyPoints) {
         mXyPointList.addAll(xyPoints);
         invalidate();
     }
 
     /**
      * 移除多边形
+     *
      * @param position
      */
-    public void removeXyViews(int position){
-        if(position >= 0 && position < mXyPointList.size()){
+    public void removeXyViews(int position) {
+        if (position >= 0 && position < mXyPointList.size()) {
             mXyPointList.remove(position);
-            if(mXyViewSelectPosition == position){
+            if (mXyViewSelectPosition == position) {
                 mXyViewSelectPosition = NONE;
-            }else if(mXyViewSelectPosition > position){
+            } else if (mXyViewSelectPosition > position) {
                 mXyViewSelectPosition--;
             }
             invalidate();
@@ -775,18 +791,19 @@ public class DragXyView extends View {
 
     /**
      * 移除多边形
+     *
      * @param xyPoint
      */
-    public void removeXyViews(XyPoint xyPoint){
-        if(mXyViewSelectPosition >= 0){//如果有选中状态的多边形，在移除多边形的同时，需同步多边形选中的位置
+    public void removeXyViews(XyPoint xyPoint) {
+        if (mXyViewSelectPosition >= 0) {//如果有选中状态的多边形，在移除多边形的同时，需同步多边形选中的位置
             int size = mXyPointList.size();
-            for(int i = 0; i < size; i++){
-                if(mXyPointList.get(i).equals(xyPoint)){
+            for (int i = 0; i < size; i++) {
+                if (mXyPointList.get(i).equals(xyPoint)) {
                     removeXyViews(i);
                     break;
                 }
             }
-        }else{
+        } else {
             mXyPointList.remove(xyPoint);
             invalidate();
         }
@@ -794,24 +811,25 @@ public class DragXyView extends View {
 
     /**
      * 移除多边形
+     *
      * @param xyPoints
      */
-    public void removeXyViews(Collection<XyPoint> xyPoints){
-        if(mXyViewSelectPosition >= 0){//如果有选中状态的多边形，在移除多边形的同时，需同步多边形选中的位置
+    public void removeXyViews(Collection<XyPoint> xyPoints) {
+        if (mXyViewSelectPosition >= 0) {//如果有选中状态的多边形，在移除多边形的同时，需同步多边形选中的位置
             int size = mXyPointList.size();
-            for(XyPoint xyPoint: xyPoints){
-                for(int i = 0; i < size; i++){
-                    if(mXyPointList.get(i).equals(xyPoint)){
-                        if(mXyViewSelectPosition == i){
+            for (XyPoint xyPoint : xyPoints) {
+                for (int i = 0; i < size; i++) {
+                    if (mXyPointList.get(i).equals(xyPoint)) {
+                        if (mXyViewSelectPosition == i) {
                             mXyViewSelectPosition = NONE;
-                        }else if(mXyViewSelectPosition > i){
+                        } else if (mXyViewSelectPosition > i) {
                             mXyViewSelectPosition--;
                         }
                         break;
                     }
                 }
             }
-        }else{
+        } else {
             mXyPointList.remove(xyPoints);
         }
         invalidate();
@@ -820,7 +838,7 @@ public class DragXyView extends View {
     /**
      * 清空多边形
      */
-    public void clearXyView(){
+    public void clearXyView() {
         mXyPointList.clear();
         mXyViewSelectPosition = NONE;
         invalidate();
@@ -828,11 +846,12 @@ public class DragXyView extends View {
 
     /**
      * 获取多边形
+     *
      * @param position
      * @return
      */
-    public XyPoint getXyView(int position){
-        if(position < mXyPointList.size()){
+    public XyPoint getXyView(int position) {
+        if (position < mXyPointList.size()) {
             return mXyPointList.get(position);
         }
         return null;
@@ -840,36 +859,39 @@ public class DragXyView extends View {
 
     /**
      * 获取多边形信息s
+     *
      * @return
      */
-    public List<XyPoint> getXyView(){
+    public List<XyPoint> getXyView() {
         return mXyPointList;
     }
 
     /**
      * 设置多边形
+     *
      * @param position
      * @param xyPoint
      */
-    public void setXyView(int position, XyPoint xyPoint){
-        if(position < mXyPointList.size()){
+    public void setXyView(int position, XyPoint xyPoint) {
+        if (position < mXyPointList.size()) {
             xyPoint.isSelected = mXyPointList.get(position).isSelected;
-            mXyPointList.set(position,xyPoint);
+            mXyPointList.set(position, xyPoint);
             invalidate();
-            if(mOnChangeListener != null){
-                mOnChangeListener.onChanged(position,false);
+            if (mOnChangeListener != null) {
+                mOnChangeListener.onChanged(position, false);
             }
         }
     }
 
     /**
      * 根据位置判断当前多边形是否是选中状态
+     *
      * @param position
      * @return
      */
-    public boolean isXyViewSelected(int position){
-        if(position >= 0 && position < mXyPointList.size()){
-            if(isMultipleSelection){
+    public boolean isXyViewSelected(int position) {
+        if (position >= 0 && position < mXyPointList.size()) {
+            if (isMultipleSelection) {
                 return mXyPointList.get(position).isSelected;
             }
             return mXyViewSelectPosition == position;
@@ -880,13 +902,14 @@ public class DragXyView extends View {
     /**
      * 根据位置设置选中的多边形，这个方法主要用于单选模式
      * 同时也兼容多选模式，如果当前是多选模式，则相当于{@link #addXyViewSelected(int...)}
+     *
      * @param position
      */
-    public void setXyViewSelected(int position){
-        if(position >= 0 && position < mXyPointList.size()){
-            if(isMultipleSelection){
+    public void setXyViewSelected(int position) {
+        if (position >= 0 && position < mXyPointList.size()) {
+            if (isMultipleSelection) {
                 mXyPointList.get(position).isSelected = true;
-            }else{
+            } else {
                 mXyViewSelectPosition = position;
             }
             invalidate();
@@ -896,35 +919,38 @@ public class DragXyView extends View {
     /**
      * 添加多边形的选中状态，这个方法主要用于多选模式时使用
      * 同时也兼容单选模式，如果当前是单选模式，则相当于选中当前位置，当前位置取{@code positions}的第0位
+     *
      * @param positions
      */
-    public void addXyViewSelected(int... positions){
-        updateXyViewSelectedPosition(true,positions);
+    public void addXyViewSelected(int... positions) {
+        updateXyViewSelectedPosition(true, positions);
     }
 
     /**
      * 移除多边形的选中状态，这个方法主要用于多选模式时使用
      * 同时也兼容单选模式，如果当前是单选模式，则相当于选中当前位置，当前位置取{@code positions}的第0位
+     *
      * @param positions
      */
-    public void removeXyViewSelected(int... positions){
-        updateXyViewSelectedPosition(false,positions);
+    public void removeXyViewSelected(int... positions) {
+        updateXyViewSelectedPosition(false, positions);
     }
 
 
     /**
      * 设置所有多边形的选中状态
      * 不管是单选模式还是多选模式，都可以使用此方法来改变多边形的选中状态
+     *
      * @param selected 是否选中
      */
-    public void setXyViewSelectedAll(boolean selected){
+    public void setXyViewSelectedAll(boolean selected) {
         int size = mXyPointList.size();
-        if(size > 0){
-            if(isMultipleSelection){
-                for(int i = 0; i < size; i++){
+        if (size > 0) {
+            if (isMultipleSelection) {
+                for (int i = 0; i < size; i++) {
                     mXyPointList.get(i).isSelected = selected;
                 }
-            }else{
+            } else {
                 //如果是单选，当状态为选中时，则只能选中第0位多边形
                 mXyViewSelectPosition = selected ? 0 : NONE;
             }
@@ -935,24 +961,25 @@ public class DragXyView extends View {
 
     /**
      * 根据多边形的位置更新多边形是否选中状态
-     * @param selected 是否选中
+     *
+     * @param selected  是否选中
      * @param positions
      */
-    private void updateXyViewSelectedPosition(boolean selected,int... positions){
+    private void updateXyViewSelectedPosition(boolean selected, int... positions) {
         int length = positions.length;
-        if(length > 0){
-            if(isMultipleSelection){
+        if (length > 0) {
+            if (isMultipleSelection) {
                 int size = mXyPointList.size();
-                if(size > 0){
+                if (size > 0) {
                     int position;
-                    for(int i = 0; i < length; i++){
+                    for (int i = 0; i < length; i++) {
                         position = positions[i];
-                        if(position >= 0 && position < size){
+                        if (position >= 0 && position < size) {
                             mXyPointList.get(position).isSelected = selected;
                         }
                     }
                 }
-            }else if(positions[0] >= 0 && positions[0] < mXyPointList.size()){//如果是单选，则只取第0个
+            } else if (positions[0] >= 0 && positions[0] < mXyPointList.size()) {//如果是单选，则只取第0个
                 mXyViewSelectPosition = selected ? positions[0] : NONE;
             }
             invalidate();
@@ -962,13 +989,14 @@ public class DragXyView extends View {
     /**
      * 获取选中的位置，这个方法主要用于单选模式
      * 同时也兼容多选模式，如果当前是多选模式，则遍历返回选中的位置索引最小的
+     *
      * @return
      */
-    public int getXyViewSelectedPosition(){
-        if(isMultipleSelection){
+    public int getXyViewSelectedPosition() {
+        if (isMultipleSelection) {
             int size = mXyPointList.size();
-            for(int i = 0; i < size; i++){
-                if(mXyPointList.get(i).isSelected){
+            for (int i = 0; i < size; i++) {
+                if (mXyPointList.get(i).isSelected) {
                     return i;
                 }
             }
@@ -979,18 +1007,19 @@ public class DragXyView extends View {
     /**
      * 获取选中的位置集合，这个方法主要用于多选模式
      * 同时也兼容单选模式，如果当前是单选模式，如果有选中的多边形，则取返回集合的第0个
+     *
      * @return
      */
-    public List<Integer> getXyViewSelectPositions(){
+    public List<Integer> getXyViewSelectPositions() {
         List<Integer> list = new ArrayList<>();
-        if(isMultipleSelection){//如果是多选模式
+        if (isMultipleSelection) {//如果是多选模式
             int size = mXyPointList.size();
-            for(int i = 0; i < size; i++){
-                if(mXyPointList.get(i).isSelected){
+            for (int i = 0; i < size; i++) {
+                if (mXyPointList.get(i).isSelected) {
                     list.add(i);
                 }
             }
-        }else if(mXyViewSelectPosition >= 0){//如果是单选模式
+        } else if (mXyViewSelectPosition >= 0) {//如果是单选模式
             list.add(mXyViewSelectPosition);
         }
 
@@ -1098,6 +1127,7 @@ public class DragXyView extends View {
 
     /**
      * 设置文本字体大小
+     *
      * @param textSize
      */
     public void setTextSize(float textSize) {
@@ -1107,6 +1137,7 @@ public class DragXyView extends View {
 
     /**
      * 设置文本的颜色
+     *
      * @param textNormalColor
      */
     public void setTextNormalColor(int textNormalColor) {
@@ -1116,6 +1147,7 @@ public class DragXyView extends View {
 
     /**
      * 设置文本按下状态的颜色
+     *
      * @param textPressedColor
      */
     public void setTextPressedColor(int textPressedColor) {
@@ -1124,6 +1156,7 @@ public class DragXyView extends View {
 
     /**
      * 设置文本选中状态的颜色
+     *
      * @param textSelectedColor
      */
     public void setTextSelectedColor(int textSelectedColor) {
@@ -1133,6 +1166,7 @@ public class DragXyView extends View {
 
     /**
      * 设置是否显示多边形的Text
+     *
      * @param showText
      */
     public void setShowText(boolean showText) {
@@ -1142,6 +1176,7 @@ public class DragXyView extends View {
 
     /**
      * 设置多边形Text的字体是否为粗体
+     *
      * @param fakeBoldText
      */
     public void setFakeBoldText(boolean fakeBoldText) {
@@ -1193,6 +1228,7 @@ public class DragXyView extends View {
 
     /**
      * 是否是多选模式
+     *
      * @return
      */
     public boolean isMultipleSelection() {
@@ -1201,6 +1237,7 @@ public class DragXyView extends View {
 
     /**
      * 设置是否是多选模式
+     *
      * @param multipleSelection
      */
     public void setMultipleSelection(boolean multipleSelection) {
@@ -1216,6 +1253,7 @@ public class DragXyView extends View {
 
     /**
      * 设置是否点击改变选择状态
+     *
      * @param clickToggleSelected
      */
     public void setClickToggleSelected(boolean clickToggleSelected) {
@@ -1224,6 +1262,7 @@ public class DragXyView extends View {
 
     /**
      * 是否允许多边形拖出视图范围
+     *
      * @return
      */
     public boolean isAllowDragOutView() {
@@ -1232,6 +1271,7 @@ public class DragXyView extends View {
 
     /**
      * 设置是否允许多边形拖出视图范围
+     *
      * @param allowDragOutView
      */
     public void setAllowDragOutView(boolean allowDragOutView) {
@@ -1240,26 +1280,30 @@ public class DragXyView extends View {
 
     /**
      * 设置改变监听
+     *
      * @param listener
      */
-    public void setOnChangeListener(OnChangeListener listener){
+    public void setOnChangeListener(OnChangeListener listener) {
         this.mOnChangeListener = listener;
     }
 
     /**
      * 改变接口
      */
-    public interface OnChangeListener{
+    public interface OnChangeListener {
         void onStartTrackingTouch(int position);
+
         void onChanged(int position, boolean fromUser);
+
         void onStopTrackingTouch(int position);
     }
 
     /**
      * 设置点击多边形监听
+     *
      * @param listener
      */
-    public void setOnXyViewClickListener(OnXyViewClickListener listener){
+    public void setOnXyViewClickListener(OnXyViewClickListener listener) {
         this.mOnXyViewClickListener = listener;
     }
 
@@ -1273,9 +1317,10 @@ public class DragXyView extends View {
 
     /**
      * 设置长按多边形监听
+     *
      * @param listener
      */
-    public void setOnXyViewLongClickListener(OnXyViewLongClickListener listener){
+    public void setOnXyViewLongClickListener(OnXyViewLongClickListener listener) {
         this.mOnXyViewLongClickListener = listener;
     }
 
@@ -1345,21 +1390,23 @@ public class DragXyView extends View {
 
         /**
          * 构造
+         *
          * @param left   矩形左边的X坐标
          * @param top    矩形上边的Y坐标
          * @param right  矩形右边的X坐标
          * @param bottom 矩形下边的Y坐标
          */
-        public XyPoint(float left, float top, float right, float bottom){
-            PointF point0 = new PointF(left,top);
-            PointF point1 = new PointF(right,top);
-            PointF point2 = new PointF(right,bottom);
-            PointF point3 = new PointF(left,bottom);
-            setPoints(point0,point1,point2,point3);
+        public XyPoint(float left, float top, float right, float bottom) {
+            PointF point0 = new PointF(left, top);
+            PointF point1 = new PointF(right, top);
+            PointF point2 = new PointF(right, bottom);
+            PointF point3 = new PointF(left, bottom);
+            setPoints(point0, point1, point2, point3);
         }
 
         /**
          * 构造
+         *
          * @param points 多边形的点坐标
          */
         public XyPoint(PointF... points) {
@@ -1368,6 +1415,7 @@ public class DragXyView extends View {
 
         /**
          * 构造
+         *
          * @param points 多边形的点坐标
          */
         public XyPoint(List<PointF> points) {
@@ -1433,44 +1481,46 @@ public class DragXyView extends View {
         /**
          * 更新边界点（分别是最左，最右，最上，最下的点坐标信息）
          */
-        private void updateBoundaryPoints(){
+        private void updateBoundaryPoints() {
             updateBoundaryPoints(mPoints);
         }
 
         /**
          * 更新边界点（分别是最左，最右，最上，最下的点坐标信息）
+         *
          * @param points
          */
-        private synchronized void updateBoundaryPoints(PointF[] points){
-            if(points != null && size > 0){
+        private synchronized void updateBoundaryPoints(PointF[] points) {
+            if (points != null && size > 0) {
                 mLeftMostPoint = mRightMostPoint = mTopMostPoint = mBottomMostPoint = points[0];
                 mLeftMostPointIndex = mRightMostPointIndex = mTopMostPointIndex = mBottomMostPointIndex = 0;
-                for(int i = 1; i < size; i++){
-                    updateBoundaryPoints(points[i],i);
+                for (int i = 1; i < size; i++) {
+                    updateBoundaryPoints(points[i], i);
                 }
-            }else{
+            } else {
                 mLeftMostPointIndex = mRightMostPointIndex = mTopMostPointIndex = mBottomMostPointIndex = NONE;
             }
         }
 
         /**
          * 更新边界点（分别是最左，最右，最上，最下的点坐标信息）
+         *
          * @param point
          */
-        private synchronized void updateBoundaryPoints(PointF point,int position){
-            if(mLeftMostPoint.x > point.x){
+        private synchronized void updateBoundaryPoints(PointF point, int position) {
+            if (mLeftMostPoint.x > point.x) {
                 mLeftMostPoint = point;
                 mLeftMostPointIndex = position;
             }
-            if(mRightMostPoint.x < point.x){
+            if (mRightMostPoint.x < point.x) {
                 mRightMostPoint = point;
                 mRightMostPointIndex = position;
             }
-            if(mTopMostPoint.y > point.y){
+            if (mTopMostPoint.y > point.y) {
                 mTopMostPoint = point;
                 mTopMostPointIndex = position;
             }
-            if(mBottomMostPoint.y < point.y){
+            if (mBottomMostPoint.y < point.y) {
                 mBottomMostPoint = point;
                 mBottomMostPointIndex = position;
             }
@@ -1479,9 +1529,10 @@ public class DragXyView extends View {
 
         /**
          * 设置多边形坐标点信息，设置时，请确保至少三个点以上才能组成一个多边形
+         *
          * @param points
          */
-        public void setPoints(PointF... points){
+        public void setPoints(PointF... points) {
             mPoints = points;
             size = mPoints.length;
             updateBoundaryPoints();
@@ -1489,27 +1540,30 @@ public class DragXyView extends View {
 
         /**
          * 设置多边形坐标点信息，设置时，请确保至少三个点以上才能组成一个多边形
+         *
          * @param points
          */
-        public void setPoints(List<PointF> points){
+        public void setPoints(List<PointF> points) {
             setPoints(points.toArray(new PointF[points.size()]));
         }
 
         /**
          * 获取多边形坐标点信息
+         *
          * @return
          */
-        public PointF[] getPoints(){
+        public PointF[] getPoints() {
             return mPoints;
         }
 
         /**
          * 更新某个点的坐标信息
+         *
          * @param point
          * @param position
          */
-        public void updatePoint(PointF point,int position){
-            if(position < size){
+        public void updatePoint(PointF point, int position) {
+            if (position < size) {
                 mPoints[position] = point;
                 updateBoundaryPoints();
             }
@@ -1517,23 +1571,24 @@ public class DragXyView extends View {
 
         /**
          * 更新某个点的坐标信息
+         *
          * @param x
          * @param y
          * @param position
          */
-        public void updatePoint(float x,float y,int position){
-            if(position < size){
+        public void updatePoint(float x, float y, int position) {
+            if (position < size) {
                 mPoints[position].x = x;
                 mPoints[position].y = y;
                 updateBoundaryPoints();
             }
         }
 
-        public void setText(String text){
+        public void setText(String text) {
             this.mText = text;
         }
 
-        public String getText(){
+        public String getText() {
             return mText;
         }
 
