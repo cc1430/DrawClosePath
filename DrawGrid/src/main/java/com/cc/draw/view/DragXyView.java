@@ -277,50 +277,50 @@ public class DragXyView extends View {
 //            int attr = a.getIndex(i);
 //            if (attr == R.styleable.DragXyView_dpvStrokeWidth) {
 //                mStrokeWidth = a.getFloat(attr, mStrokeWidth);
-//            }else if(attr == R.styleable.DragXyView_dpvPointStrokeWidthMultiplier){
-//                mPointStrokeWidthMultiplier = a.getFloat(attr,mPointStrokeWidthMultiplier);
-//            }else if(attr == R.styleable.DragXyView_dpvPointNormalColor){
-//                mPointNormalColor = a.getColor(attr,mPointNormalColor);
-//            }else if(attr == R.styleable.DragXyView_dpvPointPressedColor){
-//                mPointPressedColor = a.getColor(attr,mPointPressedColor);
-//            }else if(attr == R.styleable.DragXyView_dpvPointSelectedColor){
-//                mPointSelectedColor = a.getColor(attr,mPointSelectedColor);
-//            }else if(attr == R.styleable.DragXyView_dpvLineNormalColor){
-//                mLineNormalColor = a.getColor(attr,mLineNormalColor);
-//            }else if(attr == R.styleable.DragXyView_dpvLinePressedColor){
-//                mLinePressedColor = a.getColor(attr,mLinePressedColor);
-//            }else if(attr == R.styleable.DragXyView_dpvLineSelectedColor){
-//                mLineSelectedColor = a.getColor(attr,mLineSelectedColor);
-//            }else if(attr == R.styleable.DragXyView_dpvFillNormalColor){
-//                mFillNormalColor = a.getColor(attr,mFillNormalColor);
-//            }else if(attr == R.styleable.DragXyView_dpvFillPressedColor){
-//                mFillPressedColor = a.getColor(attr,mFillPressedColor);
-//            }else if(attr == R.styleable.DragXyView_dpvFillSelectedColor){
-//                mFillSelectedColor = a.getColor(attr,mFillSelectedColor);
-//            }else if(attr == R.styleable.DragXyView_dpvAllowableOffsets){
-//                mAllowableOffsets = a.getDimension(attr,mAllowableOffsets);
-//            }else if(attr == R.styleable.DragXyView_dpvDragEnabled){
-//                isDragEnabled = a.getBoolean(attr,isDragEnabled);
-//            }else if(attr == R.styleable.DragXyView_dpvChangeAngleEnabled){
-//                isChangeAngleEnabled = a.getBoolean(attr,isChangeAngleEnabled);
-//            }else if(attr == R.styleable.DragXyView_dpvMultipleSelection){
-//                isMultipleSelection = a.getBoolean(attr,isMultipleSelection);
-//            }else if(attr == R.styleable.DragXyView_dpvClickToggleSelected){
-//                isClickToggleSelected = a.getBoolean(attr,isClickToggleSelected);
-//            }else if(attr == R.styleable.DragXyView_dpvAllowDragOutView){
-//                isAllowDragOutView = a.getBoolean(attr,isAllowDragOutView);
-//            }else if(attr == R.styleable.DragXyView_dpvTextSize){
-//                mTextSize = a.getDimension(attr,mTextSize);
-//            }else if(attr == R.styleable.DragXyView_dpvTextNormalColor){
-//                mTextNormalColor = a.getColor(attr,mTextNormalColor);
-//            }else if(attr == R.styleable.DragXyView_dpvTextPressedColor){
-//                mTextPressedColor = a.getColor(attr,mTextPressedColor);
-//            }else if(attr == R.styleable.DragXyView_dpvTextSelectedColor){
-//                mTextSelectedColor = a.getColor(attr,mTextSelectedColor);
-//            }else if(attr == R.styleable.DragXyView_dpvShowText){
-//                isShowText = a.getBoolean(attr,isShowText);
-//            }else if(attr == R.styleable.DragXyView_dpvFakeBoldText){
-//                isFakeBoldText = a.getBoolean(attr,isFakeBoldText);
+//            } else if (attr == R.styleable.DragXyView_dpvPointStrokeWidthMultiplier) {
+//                mPointStrokeWidthMultiplier = a.getFloat(attr, mPointStrokeWidthMultiplier);
+//            } else if (attr == R.styleable.DragXyView_dpvPointNormalColor) {
+//                mPointNormalColor = a.getColor(attr, mPointNormalColor);
+//            } else if (attr == R.styleable.DragXyView_dpvPointPressedColor) {
+//                mPointPressedColor = a.getColor(attr, mPointPressedColor);
+//            } else if (attr == R.styleable.DragXyView_dpvPointSelectedColor) {
+//                mPointSelectedColor = a.getColor(attr, mPointSelectedColor);
+//            } else if (attr == R.styleable.DragXyView_dpvLineNormalColor) {
+//                mLineNormalColor = a.getColor(attr, mLineNormalColor);
+//            } else if (attr == R.styleable.DragXyView_dpvLinePressedColor) {
+//                mLinePressedColor = a.getColor(attr, mLinePressedColor);
+//            } else if (attr == R.styleable.DragXyView_dpvLineSelectedColor) {
+//                mLineSelectedColor = a.getColor(attr, mLineSelectedColor);
+//            } else if (attr == R.styleable.DragXyView_dpvFillNormalColor) {
+//                mFillNormalColor = a.getColor(attr, mFillNormalColor);
+//            } else if (attr == R.styleable.DragXyView_dpvFillPressedColor) {
+//                mFillPressedColor = a.getColor(attr, mFillPressedColor);
+//            } else if (attr == R.styleable.DragXyView_dpvFillSelectedColor) {
+//                mFillSelectedColor = a.getColor(attr, mFillSelectedColor);
+//            } else if (attr == R.styleable.DragXyView_dpvAllowableOffsets) {
+//                mAllowableOffsets = a.getDimension(attr, mAllowableOffsets);
+//            } else if (attr == R.styleable.DragXyView_dpvDragEnabled) {
+//                isDragEnabled = a.getBoolean(attr, isDragEnabled);
+//            } else if (attr == R.styleable.DragXyView_dpvChangeAngleEnabled) {
+//                isChangeAngleEnabled = a.getBoolean(attr, isChangeAngleEnabled);
+//            } else if (attr == R.styleable.DragXyView_dpvMultipleSelection) {
+//                isMultipleSelection = a.getBoolean(attr, isMultipleSelection);
+//            } else if (attr == R.styleable.DragXyView_dpvClickToggleSelected) {
+//                isClickToggleSelected = a.getBoolean(attr, isClickToggleSelected);
+//            } else if (attr == R.styleable.DragXyView_dpvAllowDragOutView) {
+//                isAllowDragOutView = a.getBoolean(attr, isAllowDragOutView);
+//            } else if (attr == R.styleable.DragXyView_dpvTextSize) {
+//                mTextSize = a.getDimension(attr, mTextSize);
+//            } else if (attr == R.styleable.DragXyView_dpvTextNormalColor) {
+//                mTextNormalColor = a.getColor(attr, mTextNormalColor);
+//            } else if (attr == R.styleable.DragXyView_dpvTextPressedColor) {
+//                mTextPressedColor = a.getColor(attr, mTextPressedColor);
+//            } else if (attr == R.styleable.DragXyView_dpvTextSelectedColor) {
+//                mTextSelectedColor = a.getColor(attr, mTextSelectedColor);
+//            } else if (attr == R.styleable.DragXyView_dpvShowText) {
+//                isShowText = a.getBoolean(attr, isShowText);
+//            } else if (attr == R.styleable.DragXyView_dpvFakeBoldText) {
+//                isFakeBoldText = a.getBoolean(attr, isFakeBoldText);
 //            }
 //        }
 //        a.recycle();
@@ -545,37 +545,42 @@ public class DragXyView extends View {
         }
         if (mXyViewPosition >= 0) {
             if (mEventPointIndex >= 0) {//拖动点，改变多边形当前拖动的点坐标信息
-                if (isChangeAngleEnabled) {
-                    //根据触摸的点坐标更新X轴坐标信息
-                    float newX = eventX;
-                    float newY = eventY;
-                    if (!isAllowDragOutView) {
-                        if (eventX < 0) {
-                            newX = 0;
-                        } else if (eventX > getWidth()) {
-                            newX = getWidth();
+                if (isClickToggleSelected && mXyViewPosition == mXyViewSelectPosition) {
+                    if (isChangeAngleEnabled) {
+                        //根据触摸的点坐标更新X轴坐标信息
+                        float newX = eventX;
+                        float newY = eventY;
+                        if (!isAllowDragOutView) {
+                            if (eventX < 0) {
+                                newX = 0;
+                            } else if (eventX > getWidth()) {
+                                newX = getWidth();
+                            }
+                            //根据触摸的点坐标更新Y轴坐标信息
+                            if (eventY < 0) {
+                                newY = 0;
+                            } else if (eventY > getHeight()) {
+                                newY = getHeight();
+                            }
                         }
-                        //根据触摸的点坐标更新Y轴坐标信息
-                        if (eventY < 0) {
-                            newY = 0;
-                        } else if (eventY > getHeight()) {
-                            newY = getHeight();
-                        }
-                    }
 
-                    mXyPointList.get(mXyViewPosition).updatePoint(newX, newY, mEventPointIndex);
-                    invalidate();
+                        mXyPointList.get(mXyViewPosition).updatePoint(newX, newY, mEventPointIndex);
+                        invalidate();
+                        if (mOnChangeListener != null) {
+                            mOnChangeListener.onChanged(mXyViewPosition, true);
+                        }
+                        return true;
+                    }
+                }
+
+            } else if (isDragEvent && (Math.abs(mLastX - eventX) > 1 || Math.abs(mLastY - eventY) > 1)) {//拖动多边形
+                if (isClickToggleSelected && mXyViewPosition == mXyViewSelectPosition) {
+                    updateDragPoints(mXyPointList.get(mXyViewPosition));
                     if (mOnChangeListener != null) {
                         mOnChangeListener.onChanged(mXyViewPosition, true);
                     }
                     return true;
                 }
-            } else if (isDragEvent && (Math.abs(mLastX - eventX) > 1 || Math.abs(mLastY - eventY) > 1)) {//拖动多边形
-                updateDragPoints(mXyPointList.get(mXyViewPosition));
-                if (mOnChangeListener != null) {
-                    mOnChangeListener.onChanged(mXyViewPosition, true);
-                }
-                return true;
             }
         }
         return false;
