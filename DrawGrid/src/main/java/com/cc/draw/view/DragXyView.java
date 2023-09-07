@@ -11,7 +11,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -493,7 +492,14 @@ public class DragXyView extends View {
                         if (isMultipleSelection) {
                             mXyPointList.get(mXyViewPosition).isSelected = !mXyPointList.get(mXyViewPosition).isSelected;
                         } else {
-                            mXyViewSelectPosition = mXyViewSelectPosition != mXyViewPosition ? mXyViewPosition : NONE;
+//                            /**
+//                             * 单点选中区域可以取消选中
+//                             */
+//                            mXyViewSelectPosition = mXyViewSelectPosition != mXyViewPosition ? mXyViewPosition : NONE;
+                            /**
+                             * 选中区域自定区域
+                             */
+                            mXyViewSelectPosition = mXyViewPosition;
                         }
                     }
                     if (mOnXyViewClickListener != null) {
@@ -600,7 +606,6 @@ public class DragXyView extends View {
         for (int i = size - 1; i >= 0; i--) {
             if (isChangeAngleEnabled) {
                 mEventPointIndex = obtainCurrentPointIndex(mXyPointList.get(i).getPoints(), eventX, eventY);
-                Log.d("chenchen", "handleDownEvent: mEventPointIndex = " + mEventPointIndex);
                 if (mEventPointIndex >= 0) {
                     mXyViewPosition = i;
                     if (mOnChangeListener != null) {
