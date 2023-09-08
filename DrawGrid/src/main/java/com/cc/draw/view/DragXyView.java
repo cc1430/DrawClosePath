@@ -344,10 +344,36 @@ public class DragXyView extends View {
         mPaint.setStrokeCap(Paint.Cap.ROUND);
         int size = mXyPointList.size();
         boolean isSelected;
-        for (int i = 0; i < size; i++) {
-            isDrag = i == mXyViewPosition;
-            isSelected = isMultipleSelection ? mXyPointList.get(i).isSelected : i == mXyViewSelectPosition;
-            drawXyView(canvas, mXyPointList.get(i), i == mXyViewPosition, isSelected);
+        /**
+         * chenchen:按数组顺序绘制，不考虑选中区域在上层
+         */
+//        for (int i = 0; i < size; i++) {
+//            isDrag = i == mXyViewPosition;
+//            isSelected = isMultipleSelection ? mXyPointList.get(i).isSelected : i == mXyViewSelectPosition;
+//            drawXyView(canvas, mXyPointList.get(i), i == mXyViewPosition, isSelected);
+//        }
+
+        /**
+         * chenchen:先绘制未选中区域，将选中区域始终绘制在最上层
+         */
+        if (isMultipleSelection) {
+            for (int i = 0; i < size; i++) {
+                isDrag = i == mXyViewPosition;
+                isSelected = isMultipleSelection ? mXyPointList.get(i).isSelected : i == mXyViewSelectPosition;
+                drawXyView(canvas, mXyPointList.get(i), i == mXyViewPosition, isSelected);
+            }
+        } else {
+            for (int i = 0; i < size; i++) {
+                isDrag = i == mXyViewPosition;
+                isSelected = i == mXyViewSelectPosition;
+                if (!isSelected) {
+                    drawXyView(canvas, mXyPointList.get(i), i == mXyViewPosition, isSelected);
+                }
+            }
+            if (mXyViewSelectPosition >= 0) {
+                isDrag = mXyViewSelectPosition == mXyViewPosition;
+                drawXyView(canvas, mXyPointList.get(mXyViewSelectPosition), mXyViewSelectPosition == mXyViewPosition, true);
+            }
         }
     }
 
@@ -395,6 +421,9 @@ public class DragXyView extends View {
                 mPaint.setColor(obtainColor(isPressed, isSelected, mPointNormalColor, mPointPressedColor, mPointSelectedColor));
                 canvas.drawPoints(lines, mPaint);
 
+                /**
+                 * chenchen:在拖拽点外围增加一个白色的圈
+                 */
                 if (mEventPointIndex >= 0 && isDrag) {
                     mPaint.setStyle(Paint.Style.STROKE);
                     mPaint.setColor(Color.WHITE);
@@ -493,11 +522,11 @@ public class DragXyView extends View {
                             mXyPointList.get(mXyViewPosition).isSelected = !mXyPointList.get(mXyViewPosition).isSelected;
                         } else {
 //                            /**
-//                             * 单点选中区域可以取消选中
+//                             * chenchen:单点选中区域可以取消选中
 //                             */
 //                            mXyViewSelectPosition = mXyViewSelectPosition != mXyViewPosition ? mXyViewPosition : NONE;
                             /**
-                             * 选中区域自定区域
+                             * chenchen:选中区域自定区域
                              */
                             mXyViewSelectPosition = mXyViewPosition;
                         }
@@ -603,6 +632,39 @@ public class DragXyView extends View {
         mDownX = mLastX = eventX;
         mDownY = mLastY = eventY;
         int size = mXyPointList.size();
+
+
+        /* chenchen:如果需要优先触动选中区域 增加此处代码 begin--->*/
+        if (mXyViewSelectPosition >= 0) {
+            if (isChangeAngleEnabled) {
+                mEventPointIndex = obtainCurrentPointIndex(mXyPointList.get(mXyViewSelectPosition).getPoints(), eventX, eventY);
+                if (mEventPointIndex >= 0) {
+                    mXyViewPosition = mXyViewSelectPosition;
+                    if (mOnChangeListener != null) {
+                        mOnChangeListener.onStartTrackingTouch(mXyViewSelectPosition);
+                    }
+                    return true;
+                }
+            }
+
+            if (mEventPointIndex < 0) {//如果触摸点小于0，则去检测是否符合拖动事件
+                isDragEvent = canDragEvent(mXyPointList.get(mXyViewSelectPosition).getPoints(), eventX, eventY);
+                if (isDragEvent) {
+                    mXyViewPosition = mXyViewSelectPosition;
+                    if (mOnChangeListener != null) {
+                        mOnChangeListener.onStartTrackingTouch(mXyViewSelectPosition);
+                    }
+                    isClickEvent = true;
+                    if (mOnXyViewLongClickListener != null) {
+                        postDelayed(mLongClickRunnable, mLongPressTimeout);
+                        isLongClickRunnable = true;
+                    }
+                    return isDragEnabled;
+                }
+            }
+        }
+        /* chenchen:如果需要优先触动选中区域 增加此处代码 end<---*/
+
         for (int i = size - 1; i >= 0; i--) {
             if (isChangeAngleEnabled) {
                 mEventPointIndex = obtainCurrentPointIndex(mXyPointList.get(i).getPoints(), eventX, eventY);
