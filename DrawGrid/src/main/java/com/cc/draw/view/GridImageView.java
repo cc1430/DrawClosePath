@@ -9,7 +9,6 @@ import android.graphics.RectF;
 import android.graphics.Region;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 
 import androidx.annotation.NonNull;
@@ -21,30 +20,30 @@ import java.util.List;
 
 public class GridImageView extends AppCompatImageView {
 
-    Context context;
+    private Context context;
     /**
      * 网格线行数和列数
      */
-    int row, column;
+    private int row, column;
     /**
      * 每个网格的宽高
      */
-    float rectW, rectH;
+    private float rectW, rectH;
     /**
      * 画笔
      */
-    Paint linePaint = new Paint();
-    Paint rectPaint = new Paint();
-    Paint pathPaint = new Paint();
+    private Paint linePaint = new Paint();
+    private Paint rectPaint = new Paint();
+    private Paint pathPaint = new Paint();
 
     /**
      * 绘制路径
      */
-    Path drawPath = new Path();
-    boolean showPath = false;
+    private Path drawPath = new Path();
+    private boolean showPath;
     private boolean bDrawPath;
 
-    int mode = MODE_DRAW;
+    private int mode;
     /**
      * 模式：绘制
      */
@@ -57,12 +56,12 @@ public class GridImageView extends AppCompatImageView {
     /**
      * 存放需要填充区域的矩形
      */
-    List<RectF> fillRectList = new ArrayList<>();
+    private List<RectF> fillRectList = new ArrayList<>();
 
     /**
      * 二位数组，返回每个网格的填充情况：1代表填充，0代表未填充
      */
-    int[][] integerArray;
+    private int[][] integerArray;
 
 
     public GridImageView(@NonNull Context context) {
@@ -97,15 +96,17 @@ public class GridImageView extends AppCompatImageView {
         pathPaint.setStrokeWidth(2f);
         pathPaint.setStyle(Paint.Style.STROKE);
 
-        if (column > 0) {
-            rectW = 1.0f * getWidth() / column;
-            for (int i = 0; i < column; i++) {
+        int col = getColumn();
+        int ro = getRow();
+        if (col > 0) {
+            rectW = 1.0f * getWidth() / col;
+            for (int i = 0; i < col; i++) {
                 canvas.drawLine(i * rectW, 0, i * rectW, getHeight(), linePaint);
             }
         }
-        if (row > 0) {
-            rectH = 1.0f * getHeight() / row;
-            for (int i = 0; i < row; i++) {
+        if (ro > 0) {
+            rectH = 1.0f * getHeight() / ro;
+            for (int i = 0; i < ro; i++) {
                 canvas.drawLine(0, i * rectH, getWidth(), i * rectH, linePaint);
             }
         }
@@ -114,8 +115,7 @@ public class GridImageView extends AppCompatImageView {
             canvas.drawRect(fillRectList.get(i), rectPaint);
         }
 
-        if (bDrawPath && showPath) {
-//            Log.d("chenchen", "onDraw: draw path!");
+        if (bDrawPath && isShowPath()) {
             canvas.drawPath(drawPath, pathPaint);
             bDrawPath = false;
         }
@@ -123,7 +123,7 @@ public class GridImageView extends AppCompatImageView {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (row <= 0 || column <= 0) {
+        if (getRow() <= 0 || getColumn() <= 0) {
             return false;
         }
         float pointX = event.getX();
@@ -140,43 +140,39 @@ public class GridImageView extends AppCompatImageView {
         }
         int indexColumn = (int) (pointX / rectW);
         int indexRow = (int) (pointY / rectH);
-        if (indexRow >= row || indexColumn >= column) {
+        if (indexRow >= getRow() || indexColumn >= getColumn()) {
             return false;
         }
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                Log.d("chenchen", "onTouchEvent: down x = " + pointX + ", y = " + pointY);
                 drawPath.reset();
                 drawPath.moveTo(pointX, pointY);
-                Log.d("chenchen", "onTouchEvent: indexRow = " + indexRow + ", indexColumn = " + indexColumn);
 
                 RectF rectf = new RectF(indexColumn * rectW, indexRow * rectH, (indexColumn + 1) * rectW, (indexRow + 1) * rectH);
-                if (mode == MODE_DRAW) {
+                if (isDrawMode()) {
                     if (!fillRectList.contains(rectf)) {
                         fillRectList.add(rectf);
-                        integerArray[indexRow][indexColumn] = 1;
+                        fillRect(indexRow, indexColumn, true);
                     }
                 } else {
                     fillRectList.remove(rectf);
-                    integerArray[indexRow][indexColumn] = 0;
+                    fillRect(indexRow, indexColumn, false);
                 }
                 invalidate();
                 break;
             case MotionEvent.ACTION_MOVE:
-                Log.d("chenchen", "onTouchEvent: move x = " + pointX + ", y = " + pointY);
-                Log.d("chenchen", "onTouchEvent: indexRow = " + indexRow + ", indexColumn = " + indexColumn);
                 drawPath.lineTo(pointX, pointY);
 
                 rectf = new RectF(indexColumn * rectW, indexRow * rectH, (indexColumn + 1) * rectW, (indexRow + 1) * rectH);
-                if (mode == MODE_DRAW) {
+                if (isDrawMode()) {
                     if (!fillRectList.contains(rectf)) {
                         fillRectList.add(rectf);
-                        integerArray[indexRow][indexColumn] = 1;
+                        fillRect(indexRow, indexColumn, true);
                     }
                 } else {
                     fillRectList.remove(rectf);
-                    integerArray[indexRow][indexColumn] = 0;
+                    fillRect(indexRow, indexColumn, false);
                 }
                 invalidate();
                 break;
@@ -184,7 +180,6 @@ public class GridImageView extends AppCompatImageView {
 //                Log.e("chenchen", "onTouchEvent: cancel");
                 break;
             case MotionEvent.ACTION_UP:
-                Log.e("chenchen", "onTouchEvent: up");
                 bDrawPath = true;
                 drawPath.lineTo(pointX, pointY);
                 drawPath.close();
@@ -193,18 +188,18 @@ public class GridImageView extends AppCompatImageView {
                 Region region = new Region();
                 region.setPath(drawPath, new Region((int) rectF.left, (int) rectF.top, (int) rectF.right, (int) rectF.bottom));
 
-                for (int i = 0; i < row; i++) {
-                    for (int j = 0; j < column; j++) {
+                for (int i = 0; i < getRow(); i++) {
+                    for (int j = 0; j < getColumn(); j++) {
                         RectF tempRectF = new RectF(j * rectW, i * rectH, (j + 1) * rectW, (i + 1) * rectH);
                         if (region.contains((int) tempRectF.centerX(), (int) tempRectF.centerY())) {
-                            if (mode == MODE_DRAW) {
+                            if (isDrawMode()) {
                                 if (!fillRectList.contains(tempRectF)) {
                                     fillRectList.add(tempRectF);
-                                    integerArray[i][j] = 1;
+                                    fillRect(i, j, true);
                                 }
                             } else {
                                 fillRectList.remove(tempRectF);
-                                integerArray[i][j] = 0;
+                                fillRect(i, j, false);
                             }
                         }
                     }
@@ -220,43 +215,14 @@ public class GridImageView extends AppCompatImageView {
     public void clearAll() {
         drawPath.reset();
         fillRectList.clear();
-        this.integerArray = new int[row][column];
+        init(getRow(), getColumn());
         invalidate();
-    }
-
-    public void setMode(int mode) {
-        this.mode = mode;
-    }
-
-    public void showDrawPath(boolean bShow) {
-        this.showPath = bShow;
     }
 
     public void drawGrid(int row, int column) {
-        this.row = row;
-        this.column = column;
-        this.integerArray = new int[row][column];
+        init(row, column);
+        setMode(MODE_DRAW);
         invalidate();
-    }
-
-    public int[][] getIntegerArray() {
-        return integerArray;
-    }
-
-    public String getArea() {
-        StringBuffer result = new StringBuffer();
-        for (int i = 0; i < row; i++) {
-            StringBuffer sb = new StringBuffer();
-            for (int j = 0; j < column; j++) {
-                sb.append(integerArray[i][j]);
-            }
-            int digit = Integer.parseInt(String.valueOf(sb), 2);
-            result.append(digit);
-            if (i != row - 1) {
-                result.append(",");
-            }
-        }
-        return result.toString();
     }
 
     public void drawArea(String area) {
@@ -265,23 +231,24 @@ public class GridImageView extends AppCompatImageView {
         }
         try {
             String[] split  = area.split(",");
+            int col = getColumn();
             for (int i = 0; i < split.length; i++) {
                 String str = Integer.toBinaryString(Integer.parseInt(split[i]));
-                if (column != str.length()) {
+                if (col != str.length()) {
                     StringBuffer stringBuffer = new StringBuffer();
-                    for (int j = 0; j < column - str.length(); j++) {
+                    for (int j = 0; j < col - str.length(); j++) {
                         stringBuffer.append("0");
                     }
                     stringBuffer.append(str);
                     str = stringBuffer.toString();
                 }
 
-                for (int j = 0; j < column; j++) {
+                for (int j = 0; j < col; j++) {
                     if ("1".equals(String.valueOf(str.charAt(j)))) {
                         RectF rectf = new RectF(j * rectW, i * rectH, (j + 1) * rectW, (i + 1) * rectH);
                         if (!fillRectList.contains(rectf)) {
                             fillRectList.add(rectf);
-                            integerArray[i][j] = 1;
+                            fillRect(i, j, true);
                         }
                     }
                 }
@@ -292,45 +259,24 @@ public class GridImageView extends AppCompatImageView {
         }
     }
 
-//    public static void main(String[] args) {
-//        String area = "8,3,0";
-//        int row = 3, column = 4;
-//        int[][] array = new int[row][column];
-//        try {
-//            String[] split  = area.split(",");
-//            for (int i = 0; i < split.length; i++) {
-//                String str = Integer.toBinaryString(Integer.parseInt(split[i]));
-////                System.out.println(str);
-//                if (column != str.length()) {
-//                    StringBuffer stringBuffer = new StringBuffer();
-//                    for (int j = 0; j < column - str.length(); j++) {
-//                        stringBuffer.append("0");
-//                    }
-//                    stringBuffer.append(str);
-//                    str = stringBuffer.toString();
-//                }
-//
-//                for (int j = 0; j < column; j++) {
-//                    array[i][j] = Integer.parseInt(String.valueOf(str.charAt(j)));
-//
-//                    RectF rectf = new RectF(indexColumn * rectW, indexRow * rectH, (indexColumn + 1) * rectW, (indexRow + 1) * rectH);
-//                    if (mode == MODE_DRAW) {
-//                        if (!fillRectList.contains(rectf)) {
-//                            fillRectList.add(rectf);
-//                            integerArray[indexRow][indexColumn] = 1;
-//                        }
-//                    }
-//                }
-//            }
-//        }catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//        for (int i = 0; i < row; i++) {
-//            for (int j = 0; j < column; j++) {
-//                System.out.println(array[i][j]);
-//            }
-//        }
-//    }
+    private native int getRow();
+
+    private native int getColumn();
+
+    private native int[][] init(int row, int column);
+
+    public native String getArea();
+
+    public native void setMode(int mode);
+
+    public native void setShowPath(boolean bShowPath);
+
+    private native boolean isShowPath();
+
+    public native boolean isDrawMode();
+
+    public native boolean isEraseMode();
+
+    private native void fillRect(int x, int y, boolean bFill);
 }
 

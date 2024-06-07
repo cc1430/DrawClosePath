@@ -47,6 +47,7 @@
 -keep public class * extends android.preference.Preference
 -keep class android.support.** {*;}
 
+-keep public class com.cc.draw.sdk.** {*;}
 
 #保持 Parcelable 不被混淆
 -keepclassmembers class * implements android.os.Parcelable {
@@ -84,6 +85,15 @@
 
 
 -keepclassmembers class com.cc.draw.view.GridImageView {
+   public *;
+   int row;
+   int column;
+   int mode;
+   boolean showPath;
+   int[][] integerArray;
+}
+
+-keepclassmembers class com.cc.draw.sdk.CCSdk {
    public *;
 }
 
